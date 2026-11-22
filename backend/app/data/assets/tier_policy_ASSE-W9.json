@@ -1,0 +1,9 @@
+{
+  "asset_id": "ASSE-W9",
+  "current_tier": "HOT",
+  "target_tier": "WARM",
+  "migration_condition": "x",
+  "cooling_days": "5",
+  "access_threshold": "5",
+  "activated_at": "2026-11-22T15:57:59.424044+00:00"
+}

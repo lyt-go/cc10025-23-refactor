@@ -1,0 +1,9 @@
+{
+  "asset_id": "ASSE-P2",
+  "current_tier": "HOT",
+  "target_tier": "WARM",
+  "migration_condition": "x",
+  "cooling_days": "9",
+  "access_threshold": "5",
+  "activated_at": "2026-11-22T16:02:29.071066+00:00"
+}

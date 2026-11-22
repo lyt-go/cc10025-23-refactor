@@ -1,0 +1,9 @@
+{
+  "asset_id": "ASSE-W1",
+  "current_tier": "HOT",
+  "target_tier": "WARM",
+  "migration_condition": "访问频次<5次/天",
+  "cooling_days": "30",
+  "access_threshold": "5",
+  "activated_at": "2026-11-22T16:00:08.548766+00:00"
+}

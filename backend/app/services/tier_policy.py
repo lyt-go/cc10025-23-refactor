@@ -14,6 +14,7 @@ from datetime import datetime, timezone
 from typing import Any
 
 from app.services.base import BaseModuleService
+from app.services.retention_rule import RetentionRuleService
 from app.store import store
 
 DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "data", "assets")
@@ -146,26 +147,18 @@ class TierPolicyService(BaseModuleService):
         }
         hot_rows.append(task)
 
-    def _link_retention_rule(self, asset_id: str, policy: dict[str, Any]) -> None:
-        """为温层资产关联保留规则。"""
-        retention_rows = store.rows("retention_rule")
-        next_id = max((int(r.get("id", 0)) for r in retention_rows), default=0) + 1
-        cooling = str(policy.get("冷却天数", "90"))
-        rule = {
-            "id": next_id,
-            "status": "草稿",
-            "pending": True,
-            "abnormal": False,
-            "规则编号": f"RETE-{next_id:04d}",
-            "目标资产": asset_id,
-            "保留天数": cooling,
-            "归档路径": f"archive://{asset_id}",
-            "压缩策略": "ZSTD",
-            "豁免条件": "",
-            "执行频率": "monthly",
-            "规则版本": "v1",
-        }
-        retention_rows.append(rule)
+    def _link_retention_rule(self, asset_id: str, policy: dict[str, Any]) -> dict[str, Any] | None:
+        """为温层资产派生保留规则草稿，字段转换与手工登记共用一套。
+
+        派生记录以策略编号作为源规则；同一策略重放时复用并补全既有记录，
+        不会额外追加一条重复的派生规则。
+        """
+        return RetentionRuleService().ensure_derived_draft(
+            asset_id=asset_id,
+            cooling_days=policy.get("冷却天数"),
+            source_rule=policy.get("策略编号"),
+            policy_values=policy,
+        )
 
     def _update_lineage_tier(self, asset_id: str, target_tier: str) -> None:
         """更新血缘图谱中的分层信息。"""
